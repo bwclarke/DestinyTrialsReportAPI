@@ -1,0 +1,19 @@
+{
+  "name": "trials-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.60.0",
+    "restify": "^4.0.0",
+    "throng": "^1.0.0",
+    "sqlite3": "^3.0.10",
+    "unzip": "^0.1.11"
+  }
+}
