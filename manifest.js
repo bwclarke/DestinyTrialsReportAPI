@@ -28,7 +28,7 @@ function onManifestRequest(error, response, body) {
   // versionFile.end();
 
   request
-    .get('http://www.bungie.net' + parsedResponse.Response.mobileWorldContentPaths.en)
+    .get('https://www.bungie.net' + parsedResponse.Response.mobileWorldContentPaths.en)
     .pipe(manifestFile)
     .on('close', onManifestDownloaded);
   // } else {
@@ -55,22 +55,22 @@ function onManifestDownloaded() {
 }
 
 function extractDB(dbFile) {
-  var DestinyTalentGridDefinition = {};
-
   db = new sqlite3.Database(dbFile);
 
   // Talent Grid
   db.all('SELECT * FROM DestinyTalentGridDefinition', function(err, rows) {
     if (err) throw err;
 
+    var DestinyTalentGridDefinition = {};
+
     rows.forEach(function(row) {
       var item = JSON.parse(row.json);
 
       DestinyTalentGridDefinition[item.gridHash] = item; // only include what's actually needed
     });
-  });
 
-  writeDefinitionFile('./definitions/DestinyTalentGridDefinition.json', DestinyTalentGridDefinition);
+    writeDefinitionFile('./definitions/DestinyTalentGridDefinition.json', DestinyTalentGridDefinition);
+  });
 }
 
-request.get('http://www.bungie.net/platform/Destiny/Manifest/', onManifestRequest);
+request.get('https://www.bungie.net/Platform/Destiny/Manifest/', onManifestRequest);
