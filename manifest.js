@@ -63,10 +63,29 @@ function extractDB(dbFile) {
 
     var DestinyTalentGridDefinition = {};
 
-    rows.forEach(function(row) {
+    rows.forEach(function(row, index) {
+      var nodes = [];
       var item = JSON.parse(row.json);
-
-      DestinyTalentGridDefinition[item.gridHash] = item; // only include what's actually needed
+      for (var n = 0, nlen = item.nodes.length; n < nlen; n++) {
+        var nodeDef = item.nodes[n];
+        var steps = [];
+        for (var s = 0, slen = nodeDef.steps.length; s < slen; s++) {
+          steps.push({
+            'name': nodeDef.steps[s].nodeStepName,
+            'nodeStepHash': nodeDef.steps[s].nodeStepHash,
+            'description': nodeDef.steps[s].nodeStepDescription,
+            'icon': 'https://www.bungie.net' + nodeDef.steps[s].icon,
+            'affectsQuality': nodeDef.steps[s].affectsQuality
+          });
+        }
+        nodes.push({
+          nodeHash: nodeDef.nodeHash,
+          row: nodeDef.row,
+          column: nodeDef.column,
+          steps: steps
+        });
+      }
+      DestinyTalentGridDefinition[item.gridHash] = nodes; // only include what's actually needed
     });
 
     writeDefinitionFile('./definitions/DestinyTalentGridDefinition.json', DestinyTalentGridDefinition);

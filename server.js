@@ -9,6 +9,13 @@ var BungieAPIPrefix = 'https://www.bungie.net/Platform/';
 var DestinyTalentGridDefinition = JSON.parse(fs.readFileSync('./definitions/DestinyTalentGridDefinition.json'));
 var siteCreators = JSON.parse(process.env.SITE_CREATORS);
 var siteDonators = JSON.parse(process.env.SITE_DONATORS);
+var headerOptions = {'X-API-Key': process.env.BUNGIE_API_KEY};
+var avoidNodes = [1270552711, 2688431654, 472357138, 1975859941,
+  2689436406, 1920788875, 643689081, 2978058659,
+  2845051978, 1891493121, 2470010183, 3985040583,
+  1450441122, 300289986, 1782221257, 431265444,
+  3707521590, 617082448, 1644354530, 3200611139,
+  994456416, 74523350, 1305317488, 3742851299];
 
 throng(start, {
   workers: process.env.WEB_CONCURRENCY || 1,
@@ -19,7 +26,7 @@ function start() {
   function getInventory(req, res) {
     var options = {
       url: BungieAPIPrefix + 'Destiny/' + req.params.membershipType + '/Account/' + req.params.membershipId + '/Character/' + req.params.characterId + '/Inventory/',
-      headers: {'X-API-Key': process.env.BUNGIE_API_KEY}
+      headers: headerOptions
     };
     try {
       request(options, function (error, response, body) {
@@ -34,15 +41,25 @@ function start() {
               talentGrid = DestinyTalentGridDefinition[thisItems.talentGridHash];
               if (talentGrid) {
                 for (var n = 0, nlen = thisItems.nodes.length; n < nlen; n++) {
-                  var nodeDef = talentGrid.nodes[n];
-                  nodeA.push({
-                    nodeHash: nodeDef.nodeHash,
-                    row: nodeDef.row,
-                    column: nodeDef.column,
-                    isActivated: thisItems.nodes[n].isActivated,
-                    stepIndex: thisItems.nodes[n].stepIndex,
-                    steps: talentGrid.nodes[n].steps[thisItems.nodes[n].stepIndex]
-                  });
+                  var nodeDef = talentGrid[n];
+                  if (thisItems.nodes[n].isActivated === true && nodeDef.column > -1) {
+                    var nodeStep = nodeDef.steps[thisItems.nodes[n].stepIndex];
+                    if (nodeStep) {
+                      if (nodeStep.name && !nodeStep.affectsQuality && (avoidNodes.indexOf(nodeStep.nodeStepHash) < 0)) {
+                        nodeA.push({
+                          nodeHash: nodeDef.nodeHash,
+                          row: nodeDef.row,
+                          column: nodeDef.column,
+                          isActivated: thisItems.nodes[n].isActivated,
+                          stepIndex: thisItems.nodes[n].stepIndex,
+                          name: nodeStep.name,
+                          description: nodeStep.description,
+                          icon: nodeStep.icon,
+                          affectsQuality: nodeStep.affectsQuality
+                        });
+                      }
+                    }
+                  }
                 }
               }
               itemO.push({
@@ -67,7 +84,7 @@ function start() {
   function getStats(req, res) {
     var options = {
       url: BungieAPIPrefix + 'Destiny/Stats/' + req.params.membershipType + '/' + req.params.membershipId + '/' + req.params.characterId + '/?modes=14',
-      headers: {'X-API-Key': process.env.BUNGIE_API_KEY}
+      headers: headerOptions
     };
     try {
       request(options, function (error, response, body) {
@@ -106,10 +123,26 @@ function start() {
     } catch (e) {}
   }
 
+  function getPostGameCarnage(req, res) {
+    var options = {
+      url: BungieAPIPrefix + 'Stats/PostGameCarnageReport/' + req.params.activityId + '/',
+      headers: headerOptions
+    };
+    try {
+      request(options, function(error, response, body) {
+        if (!error) {
+          res.send(JSON.parse(body));
+        } else {
+          res.send(error);
+        }
+      });
+    } catch(e) {}
+  }
+
   function searchPlayer(req, res) {
     var options = {
       url: BungieAPIPrefix + 'Destiny/SearchDestinyPlayer/' + req.params.platform + '/' + req.params.playerName + '/',
-      headers: {'X-API-Key': process.env.BUNGIE_API_KEY}
+      headers: headerOptions
     };
     try {
       request(options, function (error, response, body) {
@@ -125,7 +158,7 @@ function start() {
   function getAlerts(req, res) {
     var options = {
       url: BungieAPIPrefix + 'GlobalAlerts/',
-      headers: {'X-API-Key': process.env.BUNGIE_API_KEY}
+      headers: headerOptions
     };
     try {
       request(options, function (error, response, body) {
@@ -156,6 +189,7 @@ function start() {
   server.get('/SearchDestinyPlayer/:platform/:playerName', searchPlayer);
   server.get('/getInventory/:membershipType/:membershipId/:characterId', getInventory);
   server.get('/trialsStats/:membershipType/:membershipId/:characterId', getStats);
+  server.get('/PostGameCarnageReport/:activityId', getPostGameCarnage);
   server.get('/GlobalAlerts/', getAlerts);
 
   server.use(restify.throttle({
