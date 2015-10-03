@@ -125,7 +125,7 @@ function start() {
 
   function getPostGameCarnage(req, res) {
     var options = {
-      url: BungieAPIPrefix + 'Stats/PostGameCarnageReport/' + req.params.activityId + '/',
+      url: BungieAPIPrefix + 'Destiny/Stats/PostGameCarnageReport/' + req.params.activityId + '/',
       headers: headerOptions
     };
     try {
