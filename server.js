@@ -65,7 +65,6 @@ function start() {
               itemO.push({
                 itemHash: thisItems.itemHash,
                 itemLevel: thisItems.itemLevel,
-                tierType: thisItems.tierType,
                 bucketHash: items[i].bucketHash,
                 stats: thisItems.stats,
                 perks: thisItems.perks,
