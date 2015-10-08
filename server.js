@@ -46,7 +46,7 @@ function start() {
                   if (thisItems.nodes[n].isActivated === true && nodeDef.column > -1) {
                     var nodeStep = nodeDef.steps[thisItems.nodes[n].stepIndex];
                     if (nodeStep) {
-                      if (nodeStep.name && !nodeStep.affectsQuality && (avoidNodes.indexOf(nodeStep.nodeStepHash) < 0)) {
+                      if (nodeStep.name && (avoidNodes.indexOf(nodeStep.nodeStepHash) < 0)) {
                         nodeA.push({
                           nodeHash: nodeDef.nodeHash,
                           row: nodeDef.row,
