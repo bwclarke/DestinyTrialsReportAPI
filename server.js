@@ -53,6 +53,7 @@ function start() {
                           column: nodeDef.column,
                           isActivated: thisItems.nodes[n].isActivated,
                           stepIndex: thisItems.nodes[n].stepIndex,
+                          nodeStepHash: nodeDef.steps[thisItems.nodes[n].stepIndex].nodeStepHash,
                           name: nodeStep.name,
                           description: nodeStep.description,
                           icon: nodeStep.icon,
