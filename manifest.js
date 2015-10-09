@@ -75,7 +75,8 @@ function extractDB(dbFile) {
             'nodeStepHash': nodeDef.steps[s].nodeStepHash,
             'description': nodeDef.steps[s].nodeStepDescription,
             'icon': 'https://www.bungie.net' + nodeDef.steps[s].icon,
-            'affectsQuality': nodeDef.steps[s].affectsQuality
+            'affectsQuality': nodeDef.steps[s].affectsQuality,
+            'perkHashes': nodeDef.steps[s].perkHashes
           });
         }
         nodes.push({

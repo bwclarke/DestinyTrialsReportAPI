@@ -55,6 +55,7 @@ function start() {
                           isActivated: thisItems.nodes[n].isActivated,
                           stepIndex: thisItems.nodes[n].stepIndex,
                           nodeStepHash: nodeDef.steps[thisItems.nodes[n].stepIndex].nodeStepHash,
+                          perkHashes: nodeDef.steps[thisItems.nodes[n].stepIndex].perkHashes,
                           name: nodeStep.name,
                           description: nodeStep.description,
                           icon: nodeStep.icon,
