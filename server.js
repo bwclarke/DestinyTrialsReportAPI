@@ -50,7 +50,6 @@ function start() {
                       if (nodeStep.name && (avoidNodes.indexOf(nodeStep.nodeStepHash) < 0)) {
                         nodeA.push({
                           nodeHash: nodeDef.nodeHash,
-                          perkHash: nodeDef.perkHashes[0],
                           row: nodeDef.row,
                           column: nodeDef.column,
                           isActivated: thisItems.nodes[n].isActivated,
