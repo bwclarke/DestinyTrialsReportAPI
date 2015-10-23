@@ -4,26 +4,13 @@ var fs = require('fs');
 var request = require('request');
 var restify = require('restify');
 var throng = require('throng');
+var hiddenNodes = require('./scripts/modules/hiddenNodes.js');
 
 var BungieAPIPrefix = 'https://www.bungie.net/Platform/';
-var DestinyTalentGridDefinition = JSON.parse(fs.readFileSync('./definitions/DestinyTalentGridDefinition.json'));
+var DestinyTalentGridDefinition = JSON.parse(fs.readFileSync('./scripts/definitions/DestinyTalentGridDefinition.json'));
 var siteCreators = JSON.parse(process.env.SITE_CREATORS);
 var siteDonators = JSON.parse(process.env.SITE_DONATORS);
 var headerOptions = {'X-API-Key': process.env.BUNGIE_API_KEY};
-var avoidNodes = [1270552711, 2688431654, 472357138, 1975859941,
-  2689436406, 1920788875, 643689081, 2978058659,
-  2845051978, 1891493121, 2470010183, 3985040583,
-  1450441122, 300289986, 1782221257, 431265444,
-  3707521590, 617082448, 1644354530, 3200611139,
-  994456416, 74523350, 1305317488, 3742851299,
-  2636878840, 1034209669, 1263323987, 193091484,
-  2086308543,
-  213547364,  // Will of Light
-  217480046,  // Twist Fate
-  3575189929, // Hands-on
-  4197414939  // Inverse Shadow
-
-];
 
 throng(start, {
   workers: process.env.WEB_CONCURRENCY || 1,
@@ -103,7 +90,7 @@ function start() {
 
           var options = {
             url: BungieAPIPrefix + 'Destiny/Vanguard/Grimoire/' + req.params.membershipType + '/' + req.params.membershipId + '/?single=401030',
-            headers: {'X-API-Key': process.env.BUNGIE_API_KEY}
+            headers: headerOptions
           };
           try {
             request(options, function (error, response, body) {
