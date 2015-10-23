@@ -137,7 +137,6 @@ function start() {
   }
 
   function searchPlayer(req, res) {
-    console.log(req.headers["origin"]);
     var options = {
       url: BungieAPIPrefix + 'Destiny/SearchDestinyPlayer/' + req.params.platform + '/' + req.params.playerName + '/',
       headers: headerOptions
@@ -198,7 +197,7 @@ function start() {
 
   server.use(restify.throttle({
     burst: 3,
-    rate: 3,
+    rate: 5,
     ip: true
   }));
 
