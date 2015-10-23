@@ -203,6 +203,7 @@ function start() {
   server.get('/GlobalAlerts/', getAlerts);
 
   server.use(restify.throttle({
+    burst: 3,
     rate: 10,
     ip: true
   }));
