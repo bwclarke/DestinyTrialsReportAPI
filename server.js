@@ -150,6 +150,7 @@ function start() {
   }
 
   function searchPlayer(req, res) {
+    console.log(req.headers["origin"]);
     var options = {
       url: BungieAPIPrefix + 'Destiny/SearchDestinyPlayer/' + req.params.platform + '/' + req.params.playerName + '/',
       headers: headerOptions
@@ -183,18 +184,17 @@ function start() {
 
   var server = restify.createServer();
 
-  restify.CORS.ALLOW_HEADERS.push('accept');
-  restify.CORS.ALLOW_HEADERS.push('sid');
-  restify.CORS.ALLOW_HEADERS.push('lang');
-  restify.CORS.ALLOW_HEADERS.push('origin');
-  restify.CORS.ALLOW_HEADERS.push('withcredentials');
-  restify.CORS.ALLOW_HEADERS.push('x-requested-with');
-
   server.use(restify.CORS({
        origins: ['http://www.destinytrialsreport.com', 'http://trialsscout.herokuapp.com', 'http://staging.destinytrialsreport.com', 'http://my.destinytrialsreport.com']
   }));
 
-  server.use(restify.gzipResponse());
+  server.pre(function(req, res, next) {
+    if (req.headers["origin"]) {
+      return next();
+    } else {
+      return next(new restify.ConflictError("I just don't like you"));
+    }
+  });
 
   server.get('/SearchDestinyPlayer/:platform/:playerName', searchPlayer);
   server.get('/getInventory/:membershipType/:membershipId/:characterId', getInventory);
@@ -204,7 +204,7 @@ function start() {
 
   server.use(restify.throttle({
     burst: 3,
-    rate: 10,
+    rate: 3,
     ip: true
   }));
 
