@@ -185,7 +185,7 @@ function start() {
   restify.CORS.ALLOW_HEADERS.push('x-requested-with');
 
   server.use(restify.CORS({
-    //   origins: ['http://www.destinytrialsreport.com', 'http://trialsscout.herokuapp.com', 'http://staging.destinytrialsreport.com', 'http://my.destinytrialsreport.com', 'http://localhost:9000']
+       origins: ['http://www.destinytrialsreport.com', 'http://trialsscout.herokuapp.com', 'http://staging.destinytrialsreport.com', 'http://my.destinytrialsreport.com']
   }));
 
   server.use(restify.gzipResponse());
@@ -197,8 +197,7 @@ function start() {
   server.get('/GlobalAlerts/', getAlerts);
 
   server.use(restify.throttle({
-    burst: 20,
-    rate: 35,
+    rate: 10,
     ip: true
   }));
 
