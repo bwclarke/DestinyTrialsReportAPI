@@ -89,7 +89,7 @@ function extractDB(dbFile) {
       DestinyTalentGridDefinition[item.gridHash] = nodes; // only include what's actually needed
     });
 
-    writeDefinitionFile('./definitions/DestinyTalentGridDefinition.json', DestinyTalentGridDefinition);
+    writeDefinitionFile('./scripts/definitions/DestinyTalentGridDefinition.json', DestinyTalentGridDefinition);
   });
 }
 
