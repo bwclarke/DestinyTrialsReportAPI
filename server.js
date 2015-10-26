@@ -10,7 +10,7 @@ var BungieAPIPrefix = 'https://www.bungie.net/Platform/';
 var DestinyTalentGridDefinition = JSON.parse(fs.readFileSync('./scripts/definitions/DestinyTalentGridDefinition.json'));
 var siteCreators = JSON.parse(process.env.SITE_CREATORS);
 var siteDonators = JSON.parse(process.env.SITE_DONATORS);
-var headerOptions = {'X-API-Key': process.env.BUNGIE_API_KEY};
+var headerOptions;
 
 throng(start, {
   workers: process.env.WEB_CONCURRENCY || 1,
@@ -137,7 +137,6 @@ function start() {
   }
 
   function searchPlayer(req, res) {
-    console.log(req.headers["origin"]);
     var options = {
       url: BungieAPIPrefix + 'Destiny/SearchDestinyPlayer/' + req.params.platform + '/' + req.params.playerName + '/',
       headers: headerOptions
@@ -176,22 +175,29 @@ function start() {
   }));
 
   server.pre(function(req, res, next) {
-    if (req.headers["origin"]) {
-      return next();
+    //console.log(req.headers);
+    if (req.headers["origin"] || req.headers['x-api-key']) {
+      if (req.headers['x-api-key']) {
+        headerOptions = {'X-API-Key': req.headers['x-api-key']};
+        return next();
+      } else {
+        return next(new restify.ConflictError("So close..."));
+      }
     } else {
       return next(new restify.ConflictError("I just don't like you"));
     }
   });
 
-  server.get('/SearchDestinyPlayer/:platform/:playerName', searchPlayer);
-  server.get('/getInventory/:membershipType/:membershipId/:characterId', getInventory);
-  server.get('/trialsStats/:membershipType/:membershipId/:characterId', getStats);
-  server.get('/PostGameCarnageReport/:activityId', getPostGameCarnage);
+  server.get('/api/SearchDestinyPlayer/:platform/:playerName', searchPlayer);
+  server.get('/api/getInventory/:membershipType/:membershipId/:characterId', getInventory);
+  server.get('/api/trialsStats/:membershipType/:membershipId/:characterId', getStats);
+  server.get('/api/PostGameCarnageReport/:activityId', getPostGameCarnage);
+
   server.get('/GlobalAlerts/', getAlerts);
 
   server.use(restify.throttle({
     burst: 3,
-    rate: 3,
+    rate: 5,
     ip: true
   }));
 
