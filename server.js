@@ -89,7 +89,7 @@ function start() {
           var tStats = JSON.parse(body).Response.trialsOfOsiris.allTime;
 
           var options = {
-            url: BungieAPIPrefix + 'Destiny/Vanguard/Grimoire/' + req.params.membershipType + '/' + req.params.membershipId + '/?single=401030',
+            url: BungieAPIPrefix + 'Destiny/Vanguard/Grimoire/' + req.params.membershipType + '/' + req.params.membershipId + '/?single=110012',
             headers: headerOptions
           };
           try {
